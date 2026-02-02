@@ -12,6 +12,6 @@ character.collidesWith(enemy);
 ```
 
 ## TODO:
-[ ]- Using strategy design pattern create collision resolution
-[ ]- Implement ridged body to physics engine
-[ ]- Include dynamics, kinematics and static objects
+- [ ] Using strategy design pattern create collision resolution
+- [ ] Implement ridged body to physics engine
+- [ ] Include dynamics, kinematics and static objects

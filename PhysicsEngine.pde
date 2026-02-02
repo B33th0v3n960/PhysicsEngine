@@ -27,7 +27,7 @@ void draw() {
     // text("Shape width: " + myShape.getHeight(), 20, 120);
 
     System.out.println();
-    if (character.collideWith(enemy)) {
+    if (character.collidesWith(enemy)) {
         System.out.println("Collision Detected" + counter++);
     }
 

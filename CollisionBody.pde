@@ -7,7 +7,7 @@ class CollisionBody {
         // collisionShape.drawWrap();
     }
 
-    public boolean collideWith(CollisionBody other) {
+    public boolean collidesWith(CollisionBody other) {
         return this.collider.collides(other);
     }
 

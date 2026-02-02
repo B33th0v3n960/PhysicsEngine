@@ -27,7 +27,7 @@ class Sprite {
         collisionBody.updateCollisionBody(0, 0, dTheta);
     }
 
-    public boolean collideWith(Sprite other) {
-        return collisionBody.collider.collides(other.collisionBody);
+    public boolean collidesWith(Sprite other) {
+        return collisionBody.collidesWith(other.collisionBody);
     }
 }
