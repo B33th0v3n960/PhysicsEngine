@@ -34,15 +34,17 @@ class RectCollider implements Collider {
             float[][] otherEdgeNormal = other.getEdgeNormal();
             
             for (int column = 0; column < rectangleEdgeNormal[0].length; column++) {
-                float axis[] = {rectangleEdgeNormal[0][column], rectangleEdgeNormal[1][column], 1};
+                float axis[] = {rectangleEdgeNormal[0][column], rectangleEdgeNormal[1][column]};
 
                 for (int vertex = 0; vertex < rectangle.vertices.length; vertex++) {
+                    float point1[] = {rectangle.vertices[vertex][0], rectangle.vertices[vertex][1]};
+                    float point2[] = {other.vertices[vertex][0], other.vertices[vertex][1]};
                     if ( axis[0] != 0) {
-                        projection1 = Vector.projection(axis,rectangle.vertices[vertex])[0] / axis[0];
-                        projection2 = Vector.projection(axis, other.vertices[vertex])[0] / axis[0];
+                        projection1 = Vector.projection(axis,point1)[0] / axis[0];
+                        projection2 = Vector.projection(axis, point2)[0] / axis[0];
                     } else {
-                        projection1 = Vector.projection(axis,rectangle.vertices[vertex])[1] / axis[1];
-                        projection2 = Vector.projection(axis, other.vertices[vertex])[1] / axis[1];
+                        projection1 = Vector.projection(axis,point1)[1] / axis[1];
+                        projection2 = Vector.projection(axis, point2)[1] / axis[1];
                     }
                 
                     if (vertex == 0) {
@@ -62,29 +64,31 @@ class RectCollider implements Collider {
             }
             
             for (int column = 0; column < otherEdgeNormal[0].length; column++) {
-                float axis[] = {otherEdgeNormal[0][column], otherEdgeNormal[1][column], 1};
+                float axis[] = {otherEdgeNormal[0][column], otherEdgeNormal[1][column]};
                 for (int vertex = 0; vertex < other.vertices.length; vertex++) {
-                if ( axis[0] != 0) {
-                    projection1 = Vector.projection(axis, rectangle.vertices[vertex])[0] / axis[0];
-                    projection2 = Vector.projection(axis, other.vertices[vertex])[0] / axis[0];
-                } else {
-                    projection1 = Vector.projection(axis,rectangle.vertices[vertex])[1] / axis[1];
-                    projection2 = Vector.projection(axis,other.vertices[vertex])[1] / axis[1];
-                }
+                    float point1[] = {rectangle.vertices[vertex][0], rectangle.vertices[vertex][1]};
+                    float point2[] = {other.vertices[vertex][0], other.vertices[vertex][1]};
+                    if ( axis[0] != 0) {
+                        projection1 = Vector.projection(axis,point1)[0] / axis[0];
+                        projection2 = Vector.projection(axis, point2)[0] / axis[0];
+                    } else {
+                        projection1 = Vector.projection(axis,point1)[1] / axis[1];
+                        projection2 = Vector.projection(axis, point2)[1] / axis[1];
+                    }
                 
-                if (vertex == 0) {
-                    topRectangle1 = projection1;
-                    botRectangle1 = projection1;
-                    topRectangle2 = projection2;
-                    botRectangle2 = projection2;
-                }
-                topRectangle1 = (projection1 > topRectangle1)? projection1: topRectangle1;
-                botRectangle1 = (projection1 < botRectangle1)? projection1: botRectangle1;
-                topRectangle2 = (projection2 > topRectangle2)? projection2: topRectangle2;
-                botRectangle2 = (projection2 < botRectangle2)? projection2: botRectangle2;
-                }
-                if (!(topRectangle1 > botRectangle2 && topRectangle2 > botRectangle1))
-                    return false;
+                    if (vertex == 0) {
+                        topRectangle1 = projection1;
+                        botRectangle1 = projection1;
+                        topRectangle2 = projection2;
+                        botRectangle2 = projection2;
+                    }
+                    topRectangle1 = (projection1 > topRectangle1)? projection1: topRectangle1;
+                    botRectangle1 = (projection1 < botRectangle1)? projection1: botRectangle1;
+                    topRectangle2 = (projection2 > topRectangle2)? projection2: topRectangle2;
+                    botRectangle2 = (projection2 < botRectangle2)? projection2: botRectangle2;
+                    }
+                    if (!(topRectangle1 > botRectangle2 && topRectangle2 > botRectangle1))
+                        return false;
             }
             return true;
         }
@@ -96,7 +100,8 @@ class RectCollider implements Collider {
         if (rectangle != null && other != null) {
             float[][] edgeNormal = rectangle.getEdgeNormal();
             float radius = other.getWidth()/2;
-            float circleCenter[] = {other.getX(), other.getY(), 1};
+            float circleCenter[] = {other.getX(), other.getY()};
+            float rectangleCenter[] = {rectangle.getX(), rectangle.getY()};
 
             float projection1 = 0.0;
             float projection2 = 0.0;
@@ -106,20 +111,18 @@ class RectCollider implements Collider {
             float botCircle = 0.0;
 
             for (int column = 0; column < 2; column++){
-                float axis[] = {edgeNormal[0][column], edgeNormal[1][column], 1};
-
+                float axis[] = {edgeNormal[0][column], edgeNormal[1][column]};
             
                 for (int vertex = 0; vertex < rectangle.vertices.length; vertex++) {
+                    float point[] = {rectangle.vertices[vertex][0], rectangle.vertices[vertex][1]};
                     if ( axis[0] != 0) 
-                        projection1 = Vector.projection(axis,rectangle.vertices[vertex])[0] / axis[0];
+                        projection1 = Vector.projection(axis, point)[0] / axis[0];
                     else 
-                        projection1 = Vector.projection(axis,rectangle.vertices[vertex])[1] / axis[1];
-            
+                        projection1 = Vector.projection(axis,point)[1] / axis[1];
                     if (vertex == 0) {
                         topRectangle = projection1;
                         botRectangle = projection1;
                     }
-
                     topRectangle = (projection1 > topRectangle)? projection1: topRectangle;
                     botRectangle = (projection1 < botRectangle)? projection1: botRectangle;
                 }
@@ -134,14 +137,45 @@ class RectCollider implements Collider {
                     return false;
             }
 
-            float shortestDistance = sqrt(pow(circleCenter[0] - rectangle.vertices[0][0], 2) + pow(circleCenter[1] - rectangle.vertices[0][1], 2));
-            for (float vertex[]: rectangle.vertices)  {
-                float distance = sqrt(pow(circleCenter[0] - vertex[0], 2) + pow(circleCenter[1] - vertex[1], 2));
-                if (distance < shortestDistance)
-                    shortestDistance = distance;
+            float axis[] = {circleCenter[0] - rectangleCenter[0], circleCenter[1] - rectangleCenter[1]};
+            axis = Vector.scalarMul(1/Vector.magnitude(axis), axis);
+            for (int vertex = 0; vertex < rectangle.vertices.length; vertex++) {
+                float point[] = {rectangle.vertices[vertex][0], rectangle.vertices[vertex][1]};
+                if ( axis[0] != 0) 
+                    projection1 = Vector.projection(axis, point)[0] / axis[0];
+                else 
+                    projection1 = Vector.projection(axis,point)[1] / axis[1];
+                if (vertex == 0) {
+                    topRectangle = projection1;
+                    botRectangle = projection1;
+                }
+                topRectangle = (projection1 > topRectangle)? projection1: topRectangle;
+                botRectangle = (projection1 < botRectangle)? projection1: botRectangle;
             }
-            if (shortestDistance < radius)
-                return true;
+
+            float centerProjection[] = Vector.projection(axis, circleCenter);
+            if ( axis[0] != 0) {
+                botCircle = centerProjection[0]/ axis[0] - radius;
+                topCircle = centerProjection[0]/ axis[0] + radius;
+                if (topCircle < botCircle) {
+                    botCircle += topCircle;
+                    topCircle = botCircle - topCircle;
+                    topCircle -= botCircle;
+                }
+            }
+            else {
+                botCircle = centerProjection[1]/ axis[1] - radius;
+                topCircle = centerProjection[1]/ axis[1] + radius;
+                if (topCircle < botCircle) {
+                    botCircle += topCircle;
+                    topCircle = botCircle - topCircle;
+                    topCircle -= botCircle;
+                }
+            }
+            if (!(topRectangle > botCircle && topCircle > botRectangle))         
+                return false;
+
+            return true;
         }
         return false;
     }
@@ -167,7 +201,8 @@ class EllipseCollider implements Collider {
         if (ellipse != null && other != null) {
             float[][] edgeNormal = other.getEdgeNormal();
             float radius = ellipse.getWidth()/2;
-            float circleCenter[] = {ellipse.getX(), ellipse.getY(), 1};
+            float circleCenter[] = {ellipse.getX(), ellipse.getY()};
+            float rectangleCenter[] = {other.getX(), other.getY()};
 
             float projection1 = 0.0;
             float projection2 = 0.0;
@@ -177,14 +212,15 @@ class EllipseCollider implements Collider {
             float botCircle = 0.0;
 
             for (int column = 0; column < 2; column++){
-                float axis[] = {edgeNormal[0][column], edgeNormal[1][column], 1};
+                float axis[] = {edgeNormal[0][column], edgeNormal[1][column]};
 
             
                 for (int vertex = 0; vertex < other.vertices.length; vertex++) {
+                    float point[] = {other.vertices[vertex][0], other.vertices[vertex][1]};
                     if ( axis[0] != 0) 
-                        projection1 = Vector.projection(axis, other.vertices[vertex])[0] / axis[0];
+                        projection1 = Vector.projection(axis, point)[0] / axis[0];
                     else 
-                        projection1 = Vector.projection(axis, other.vertices[vertex])[1] / axis[1];
+                        projection1 = Vector.projection(axis, point)[1] / axis[1];
             
                     if (vertex == 0) {
                         topRectangle = projection1;
@@ -206,15 +242,46 @@ class EllipseCollider implements Collider {
                     return false;
             }
             
-            float shortestDistance = sqrt(pow(circleCenter[0] - other.vertices[0][0], 2) + pow(circleCenter[1] - other.vertices[0][1], 2));
-            for (float vertex[]: other.vertices)  {
-                float distance = sqrt(pow(circleCenter[0] - vertex[0], 2) + pow(circleCenter[1] - vertex[1], 2));
-                if (distance < shortestDistance)
-                    shortestDistance = distance;
-                    
+            float axis[] = {circleCenter[0] - rectangleCenter[0], circleCenter[1] - rectangleCenter[1]};
+            axis = Vector.scalarMul(1/Vector.magnitude(axis), axis);
+            for (int vertex = 0; vertex < other.vertices.length; vertex++) {
+                float point[] = {other.vertices[vertex][0], other.vertices[vertex][1]};
+                if ( axis[0] != 0) 
+                    projection1 = Vector.projection(axis, point)[0] / axis[0];
+                else 
+                    projection1 = Vector.projection(axis,point)[1] / axis[1];
+                if (vertex == 0) {
+                    topRectangle = projection1;
+                    botRectangle = projection1;
+                }
+                topRectangle = (projection1 > topRectangle)? projection1: topRectangle;
+                botRectangle = (projection1 < botRectangle)? projection1: botRectangle;
             }
-            if (shortestDistance < radius)
-                return true;
+
+            float centerProjection[] = Vector.projection(axis, circleCenter);
+            if ( axis[0] != 0) {
+                botCircle = centerProjection[0]/ axis[0] - radius;
+                topCircle = centerProjection[0]/ axis[0] + radius;
+                if (topCircle < botCircle) {
+                    botCircle += topCircle;
+                    topCircle = botCircle - topCircle;
+                    topCircle -= botCircle;
+                }
+            }
+            else {
+                botCircle = centerProjection[1]/ axis[1] - radius;
+                topCircle = centerProjection[1]/ axis[1] + radius;
+                if (topCircle < botCircle) {
+                    botCircle += topCircle;
+                    topCircle = botCircle - topCircle;
+                    topCircle -= botCircle;
+                }
+            }
+
+            if (!(topRectangle > botCircle && topCircle > botRectangle))         
+                return false;
+            return true;
+
         }
         return false;
     }
@@ -224,7 +291,10 @@ class EllipseCollider implements Collider {
         if (ellipse != null && other != null) {
             float centreToCentre[] = { other.getX() - ellipse.getX(), other.getY() - ellipse.getY()};
             float distanceBetweenCentre = Vector.magnitude(centreToCentre);
-            return distanceBetweenCentre < ellipse.getWidth()/2 + other.getWidth()/2;
+            if (distanceBetweenCentre < ellipse.getWidth()/2 + other.getWidth()/2) {
+                return true;
+            }
+            return false;
         }
         return false;
     }
