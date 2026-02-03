@@ -156,7 +156,10 @@ class EllipseCollider implements Collider {
 
     @Override
     boolean collides(CollisionBody other) {
-        return other.collider.collidesWithEllipse(ellipse);
+        if (ellipse != null && other != null) {
+            return other.collider.collidesWithEllipse(ellipse);
+        }
+        return false;
     }
 
     @Override
