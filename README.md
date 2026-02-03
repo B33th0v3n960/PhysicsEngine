@@ -1,4 +1,4 @@
-# Physic Engine
+# Physics Engine
 
 ## Collision System
 - Built with Separation Axis Theorem (SAT)
